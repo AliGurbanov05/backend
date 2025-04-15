@@ -3,10 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../config/db");
 const normalizeUserInput = require("../utils/normalizeInput");
-require("dotenv").config();
 
 const router = express.Router();
-
 // ➕ Signup
 router.post("/signup", async (req, res) => {
  let { name, email, password } = normalizeUserInput(req.body);
@@ -30,11 +28,10 @@ router.post("/signup", async (req, res) => {
 // 🔐 Login
 router.post("/login", async (req, res) => {
   let { email, password } = normalizeUserInput(req.body);
-  console.log(req.body);
+  console.log("LOGIN BODY:", req.body);
+
   try {
-    const [users] = await db.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
+    const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
     if (users.length === 0)
       return res.status(400).json({ message: "Invalid email or password" });
 
