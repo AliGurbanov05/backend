@@ -1,7 +1,6 @@
 const express = require("express");
 const authRoutes = require("./routers/auth");
 require("dotenv").config();
-const express = require("express");
 const cors = require("cors");
 
 // Burada CORS-u aktiv et
