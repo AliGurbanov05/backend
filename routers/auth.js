@@ -7,7 +7,10 @@ const normalizeUserInput = require("../utils/normalizeInput");
 const router = express.Router();
 // ➕ Signup
 router.post("/signup", async (req, res) => {
- let { name, email, password } = normalizeUserInput(req.body);
+ const { email, password } = {
+    email: req.body.email?.trim().toLowerCase(),
+    password: req.body.password?.trim(),
+  };
   try {
     const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
@@ -27,32 +30,44 @@ router.post("/signup", async (req, res) => {
 
 // 🔐 Login
 router.post("/login", async (req, res) => {
-  let { email, password } = normalizeUserInput(req.body);
-  console.log("LOGIN BODY:", req.body);
+  console.log("✅ Login istəyi gəldi");
+  console.log("📦 BODY:", req.body);
+
+  const { email, password } = {
+    email: req.body.email?.trim().toLowerCase(),
+    password: req.body.password?.trim(),
+  };
 
   try {
     const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-    if (users.length === 0)
+    console.log("🔍 Tapılan userlər:", users);
+
+    if (users.length === 0) {
       return res.status(400).json({ message: "Invalid email or password" });
+    }
 
     const user = users[0];
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
+    }
 
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
+
     res.json({
       message: "Login successful",
       token,
       user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (err) {
+    console.error("❌ Server error:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
 
 module.exports = router;
