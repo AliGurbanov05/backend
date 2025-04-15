@@ -2,13 +2,14 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../config/db");
+const normalizeUserInput = require("../utils/normalizeInput");
 require("dotenv").config();
 
 const router = express.Router();
 
 // ➕ Signup
 router.post("/signup", async (req, res) => {
-  const { name, email, password } = req.body;
+ let { name, email, password } = normalizeUserInput(req.body);
   try {
     const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
@@ -28,7 +29,8 @@ router.post("/signup", async (req, res) => {
 
 // 🔐 Login
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = normalizeUserInput(req.body);
+  console.log("REQ BODY:", req.body);
   try {
     const [users] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
