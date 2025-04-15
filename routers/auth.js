@@ -15,11 +15,9 @@ router.post("/signup", async (req, res) => {
     ]);
     if (existing.length > 0)
       return res.status(400).json({ message: "Email already exists" });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
     await db.query(
       "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name, email, hashedPassword]
+      [name, email, password]
     );
 
     res.status(201).json({ message: "User registered successfully" });
