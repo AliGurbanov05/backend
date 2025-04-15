@@ -30,7 +30,7 @@ router.post("/signup", async (req, res) => {
 // 🔐 Login
 router.post("/login", async (req, res) => {
   let { email, password } = normalizeUserInput(req.body);
-  console.log("REQ BODY:", req.body);
+  console.log(req.body);
   try {
     const [users] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
