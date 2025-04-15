@@ -1,6 +1,7 @@
 const express = require("express");
 const authRoutes = require("./routers/auth");
 require("dotenv").config();
+const app = express();
 const cors = require("cors");
 
 // Burada CORS-u aktiv et
@@ -9,7 +10,6 @@ app.use(cors());
 app.use(express.json());
 
 
-const app = express();
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
